@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2D Geometrie aus Linien</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+
+<div id="configuration">
+    <div>
+        <input class="form-range" type="range" id="degree" name="degree" min="0" max="360" value="0"
+               step="1">
+        <label class="form-label" for="degree">Start (Winkel in Grad)</label>
+    </div>
+
+    <div>
+        <input class="form-range" type="range" id="amplitude" name="amplitude" min="50" max="400" value="100"
+               step="0.5">
+        <label class="form-label" for="amplitude">Höhe der Amplitude</label>
+    </div>
+</div>
+
+<canvas id="canvas" width="1000px" height="500px"></canvas>
+
+<script src="script/main.js" type="text/javascript"></script>
+
+</body>
+
+</html>
