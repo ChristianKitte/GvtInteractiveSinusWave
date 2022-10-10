@@ -1,4 +1,33 @@
 /**
+ * Der aktuell gültige WebGL Kontext
+ * @type {*}
+ */
+var gl = getContext(0.9, 0.9, 0.9, 1);
+
+/**
+ * Das Aktuell gültige WebGL Programm
+ */
+var prog;
+
+/**
+ * Hält den Wert für den Start der Sinuskurve
+ * @type {number}
+ */
+var start_val = 0.0; // ==> StartWert
+
+/**
+ * Hält den Wert für die Amplitude
+ * @type {number}
+ */
+var y_scale = 100; // ==> Amplitude
+
+/**
+ * Array, das die aktuellen Punkt hält
+ * @type {Float32Array}
+ */
+vertices = new Float32Array([]);
+
+/**
  * Erzeugt einen WebGL Kontext mit dem als RGB übergebenen Farbwert als Hintergrund
  * und gibt diesen zurück. Zusätzlich wird der Ausgabebereich vergrößert
  *
@@ -25,12 +54,6 @@ function getContext(redVal, greenVal, blueVal, alphaVal) {
 }
 
 /**
- * Array, das die aktuellen Punkt hält
- * @type {Float32Array}
- */
-vertices = new Float32Array([]);
-
-/**
  * Hilfsfunktion, um im Array vertices dynamisch einen neuen Wert
  * hinzuzufügen
  *
@@ -41,33 +64,23 @@ function push() {
 }
 
 /**
- * Hält den Wert für den Start der Sinuskurve
- * @type {number}
- */
-var start_val = 0; // ==> StartWert
-
-/**
- * Setzt den Wert für den der Startwert der
+ * Setzt den Wert für den der Startwert (float) der Sinuskurve und
+ * initiiert das Neuzeichnen
  * @param obj
  */
 document.getElementById("degree").oninput = (obj) => {
-    start_val = document.getElementById("degree").value;
-    drawWave();
+    start_val = parseFloat(document.getElementById("degree").value);
+    RefreshWave();
 }
 
 /**
- * Hält den Wert für die Amplitude
- * @type {number}
- */
-var y_scale = 100; // ==> Amplitude
-
-/**
- * Setzt den Wert für die Amplitude
+ * Setzt den Wert für die Amplitude (float) der Sinuskurve und
+ * initiiert das Neuzeichnen
  * @param obj
  */
 document.getElementById("amplitude").oninput = (obj) => {
-    y_scale = document.getElementById("amplitude").value;
-    drawWave();
+    y_scale = parseFloat(document.getElementById("amplitude").value);
+    RefreshWave();
 }
 
 /**
@@ -75,14 +88,14 @@ document.getElementById("amplitude").oninput = (obj) => {
  * @returns {Float32Array|*}
  */
 function getVerticesPointsArray() {
-    var distance = 1; // ==> Zoom
+    var distance = 4; // ==> Zoom
     var x_pos = 1;
     var y_pos = 0;
 
     vertices = new Float32Array([]);
 
-    for (let i = 1.0; i < 361; i++) {
-        start_val++;
+    for (let i = 1.0; i < 81; i++) {
+        start_val = start_val + 4.0;
 
         let radians = start_val * Math.PI / 180.0;
         y_pos = Math.sin(radians) * y_scale;
@@ -107,7 +120,8 @@ function getVerticesPointsArray() {
 }
 
 /**
- * Seichnet die Sinuskuve mit Hilfe von STRIPES Objekten
+ * Initialisiert die WebGL Anwendung beim ersten Starten und defineirt die Shader und
+ * das Programm
  */
 function drawWave() {
     var gl = getContext(0.9, 0.9, 0.9, 1);
@@ -135,12 +149,21 @@ function drawWave() {
     gl.compileShader(fsShader);
 
     // Link together into a program
-    var prog = gl.createProgram();
+    //var prog = gl.createProgram();
+    prog = gl.createProgram();
     gl.attachShader(prog, vsShader);
     gl.attachShader(prog, fsShader);
     gl.linkProgram(prog);
     gl.useProgram(prog);
 
+    RefreshWave();
+}
+
+/**
+ * Belegt den Ausgabebuffer mit den aktuellen Daten neu und zeichnet die
+ * Ausgabe
+ */
+function RefreshWave() {
     // Aktuelle Punkte berechnen und zurückgeben lassen
     var verticesPointsArray = getVerticesPointsArray();
 
@@ -149,12 +172,12 @@ function drawWave() {
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.bufferData(gl.ARRAY_BUFFER, verticesPointsArray, gl.STATIC_DRAW);
 
-    // Buffer für die Punkte erzeugen und laden
+    // posAttrib erzeugen und verwenden
     var posAttrib = gl.getAttribLocation(prog, 'pos');
     gl.vertexAttribPointer(posAttrib, 2, gl.FLOAT, true, 0, 0);
     gl.enableVertexAttribArray(posAttrib);
 
-    // Ausgabe mit drawElements statt drawArray
+    // Ausgabe mit drawArray
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.LINES, 0, verticesPointsArray.length);
 }
