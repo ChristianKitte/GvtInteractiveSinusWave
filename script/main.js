@@ -1,6 +1,6 @@
 /**
  * Der aktuell gültige WebGL Kontext
- * @type {*}
+ * @type {*} Ein WebGL Kontext
  */
 var gl = getContext(0.9, 0.9, 0.9, 1);
 
@@ -10,20 +10,20 @@ var gl = getContext(0.9, 0.9, 0.9, 1);
 var prog;
 
 /**
- * Hält den Wert für den Start der Sinuskurve
- * @type {number}
+ * Hält den aktuellen Startwert der Sinuskurve
+ * @type {number} Der Startwert
  */
 var start_val = 0.0; // ==> StartWert
 
 /**
- * Hält den Wert für die Amplitude
- * @type {number}
+ * Hält den aktuellen Wert zur Skalierung der Amplitude
+ * @type {number} Der Skalierungswert
  */
 var y_scale = 100; // ==> Amplitude
 
 /**
- * Array, das die aktuellen Punkt hält
- * @type {Float32Array}
+ * Array, das die aktuellen Vertices hält
+ * @type {Float32Array} Ein neues Float32 Array
  */
 vertices = new Float32Array([]);
 
@@ -66,9 +66,8 @@ function push() {
 /**
  * Setzt den Wert für den der Startwert (float) der Sinuskurve und
  * initiiert das Neuzeichnen
- * @param obj
  */
-document.getElementById("degree").oninput = (obj) => {
+document.getElementById("degree").oninput = () => {
     start_val = parseFloat(document.getElementById("degree").value);
     RefreshWave();
 }
@@ -76,9 +75,8 @@ document.getElementById("degree").oninput = (obj) => {
 /**
  * Setzt den Wert für die Amplitude (float) der Sinuskurve und
  * initiiert das Neuzeichnen
- * @param obj
  */
-document.getElementById("amplitude").oninput = (obj) => {
+document.getElementById("amplitude").oninput = () => {
     y_scale = parseFloat(document.getElementById("amplitude").value);
     RefreshWave();
 }
@@ -92,6 +90,9 @@ function getVerticesPointsArray() {
     var x_pos = 1;
     var y_pos = 0;
 
+    var lastAmplitude = 0
+    var bridgeToRight = true;
+
     vertices = new Float32Array([]);
 
     for (let i = 1.0; i < 81; i++) {
@@ -100,18 +101,53 @@ function getVerticesPointsArray() {
         let radians = start_val * Math.PI / 180.0;
         y_pos = Math.sin(radians) * y_scale;
 
+        if (y_pos > 0) {
+            bridgeToRight = lastAmplitude < y_pos;
+        } else if (y_pos < 0) {
+            bridgeToRight = lastAmplitude > y_pos;
+        }
+        lastAmplitude = y_pos;
+
         // Add start Point 1th line
         push(x_pos);
         push(0);
         //Add end Point 1th line
         push(x_pos);
         push(y_pos);
-        //Add start Point 2th line
-        push(x_pos);
-        push(y_pos);
-        //Add end Point 2th line
-        push((x_pos) + distance);
-        push(y_pos);
+
+        if (y_pos > 0) {
+            if (bridgeToRight) {
+                //Add start Point 2th line
+                push(x_pos);
+                push(y_pos);
+                //Add end Point 2th line
+                push((x_pos) + distance);
+                push(y_pos);
+            } else {
+                //Add start Point 2th line
+                push(x_pos);
+                push(y_pos);
+                //Add end Point 2th line
+                push((x_pos) - distance);
+                push(y_pos);
+            }
+        } else if (y_pos < 0) {
+            if (bridgeToRight) {
+                //Add start Point 2th line
+                push(x_pos);
+                push(y_pos);
+                //Add end Point 2th line
+                push((x_pos) + distance);
+                push(y_pos);
+            } else {
+                //Add start Point 2th line
+                push(x_pos);
+                push(y_pos);
+                //Add end Point 2th line
+                push((x_pos) - distance);
+                push(y_pos);
+            }
+        }
 
         x_pos = (x_pos) + distance;
     }
@@ -120,13 +156,11 @@ function getVerticesPointsArray() {
 }
 
 /**
- * Initialisiert die WebGL Anwendung beim ersten Starten und defineirt die Shader und
- * das Programm
+ * Initialisiert und konfiguriert die WebGL Anwendung und definiert die Shader und
+ * das Programm. Es wird ein gültiger WebGL Kontext erwartet.
  */
-function drawWave() {
-    var gl = getContext(0.9, 0.9, 0.9, 1);
-
-    // Compile a vertex shader
+function iniWebGLApp() {
+    // vertex shader
     var vsSource = '' +
         'attribute vec2 pos;' +
         'void main(){' +
@@ -138,7 +172,7 @@ function drawWave() {
     gl.shaderSource(vsShader, vsSource);
     gl.compileShader(vsShader);
 
-    // Compile a fragment shader
+    // fragment shader
     fsSouce =
         'void main() { ' +
         'gl_FragColor = vec4(1,0,0,1); ' +
@@ -148,20 +182,20 @@ function drawWave() {
     gl.shaderSource(fsShader, fsSouce);
     gl.compileShader(fsShader);
 
-    // Link together into a program
-    //var prog = gl.createProgram();
+    // create program and link shader to program
     prog = gl.createProgram();
     gl.attachShader(prog, vsShader);
     gl.attachShader(prog, fsShader);
     gl.linkProgram(prog);
     gl.useProgram(prog);
 
+    // start drawing
     RefreshWave();
 }
 
 /**
- * Belegt den Ausgabebuffer mit den aktuellen Daten neu und zeichnet die
- * Ausgabe
+ * Belegt den Ausgabebuffer des aktuellen WebGL Programms mit den aktuellen Daten neu und zeichnet die
+ * Ausgabe. Das WebGL Programm muss zuvor bereits initialisiert und konfiguriert worden sein.
  */
 function RefreshWave() {
     // Aktuelle Punkte berechnen und zurückgeben lassen
@@ -183,6 +217,6 @@ function RefreshWave() {
 }
 
 /**
- * Startet die erste Ausgabe der Grafik
+ * Startet die WebGL Anwendung und erste Ausgabe der Grafik
  */
-drawWave();
+iniWebGLApp();
