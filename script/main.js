@@ -9,17 +9,34 @@ var gl = getContext(0.9, 0.9, 0.9, 1);
  */
 var prog;
 
+var a = document.getElementById("value-degree");
+var b = document.getElementById("value-amplitude");
+var c = document.getElementById("value-resolution");
+
 /**
- * Hält den aktuellen Startwert der Sinuskurve
+ * Hält den anfänglichen Startwert der Sinuskurve beim Start
  * @type {number} Der Startwert
  */
 var start_val = 0.0; // ==> StartWert
+
+/**
+ * Hält den aktuellen Startwert, de im Verlauf der Ausgabe immer weiter
+ * anwächst.
+ * @type {number} Der aktuelle Startwert
+ */
+var curentStart_val = 0.0; // ==> StartWert
 
 /**
  * Hält den aktuellen Wert zur Skalierung der Amplitude
  * @type {number} Der Skalierungswert
  */
 var y_scale = 100; // ==> Amplitude
+
+/**
+ * Hält die aktuelle Auflösung (Wird durch Distanz bestimmt)
+ * @type {number} Die Auflösung
+ */
+var resolution = 4; // ==> Amplitude
 
 /**
  * Array, das die aktuellen Vertices hält
@@ -82,30 +99,60 @@ document.getElementById("amplitude").oninput = () => {
 }
 
 /**
+ * Setzt den Wert für die Auflösung (float) der Sinuskurve und
+ * initiiert das Neuzeichnen
+ */
+document.getElementById("resolution").oninput = () => {
+    resolution = parseFloat(document.getElementById("resolution").value);
+    RefreshWave();
+}
+
+/**
+ * Ladet die Seite neu und refreshed die Anwendung
+ */
+document.getElementById("reset").onclick = () => {
+    window.location.reload();
+}
+
+/**
  * Baut ein Vertices Array auf Basis der Vorgabewerte
  * @returns {Float32Array|*}
  */
 function getVerticesPointsArray() {
-    var distance = 4; // ==> Zoom
+    var distance = resolution; // ==> Zoom
     var x_pos = 1;
     var y_pos = 0;
 
     var lastAmplitude = 0
     var bridgeToRight = true;
 
+    curentStart_val = start_val;
+
     vertices = new Float32Array([]);
 
-    for (let i = 1.0; i < 81; i++) {
-        start_val = start_val + 4.0;
+    a.innerText = "Aktueller Wert: " + start_val.toString() + " °";
+    b.innerText = "Aktueller Wert: " + y_scale.toString();
+    c.innerText = "Aktueller Wert: " + resolution.toString();
 
-        let radians = start_val * Math.PI / 180.0;
+    for (let i = 1.0; i < 81; i++) {
+        curentStart_val = curentStart_val + distance;
+
+        let radians = curentStart_val * Math.PI / 180.0;
         y_pos = Math.sin(radians) * y_scale;
 
-        if (y_pos > 0) {
-            bridgeToRight = lastAmplitude < y_pos;
-        } else if (y_pos < 0) {
-            bridgeToRight = lastAmplitude > y_pos;
+        let nextRadians = (curentStart_val + distance) * Math.PI / 180.0;
+        let nextY_pos = Math.sin(nextRadians) * y_scale;
+
+        if (y_pos < nextY_pos && y_pos > 0) {
+            bridgeToRight = true;
+        } else if (y_pos > nextY_pos && y_pos > 0) {
+            bridgeToRight = false;
+        } else if (y_pos < nextY_pos && y_pos < 0) {
+            bridgeToRight = false;
+        } else if (y_pos > nextY_pos && y_pos < 0) {
+            bridgeToRight = true;
         }
+
         lastAmplitude = y_pos;
 
         // Add start Point 1th line
@@ -115,38 +162,24 @@ function getVerticesPointsArray() {
         push(x_pos);
         push(y_pos);
 
-        if (y_pos > 0) {
-            if (bridgeToRight) {
-                //Add start Point 2th line
-                push(x_pos);
-                push(y_pos);
-                //Add end Point 2th line
-                push((x_pos) + distance);
-                push(y_pos);
-            } else {
-                //Add start Point 2th line
-                push(x_pos);
-                push(y_pos);
-                //Add end Point 2th line
-                push((x_pos) - distance);
-                push(y_pos);
-            }
-        } else if (y_pos < 0) {
-            if (bridgeToRight) {
-                //Add start Point 2th line
-                push(x_pos);
-                push(y_pos);
-                //Add end Point 2th line
-                push((x_pos) + distance);
-                push(y_pos);
-            } else {
-                //Add start Point 2th line
-                push(x_pos);
-                push(y_pos);
-                //Add end Point 2th line
-                push((x_pos) - distance);
-                push(y_pos);
-            }
+        console.log(curentStart_val);
+        console.log(start_val);
+        console.log("__");
+
+        if (bridgeToRight) {
+            //Add start Point 2th line
+            push(x_pos);
+            push(y_pos);
+            //Add end Point 2th line
+            push((x_pos) + distance);
+            push(y_pos);
+        } else {
+            //Add start Point 2th line
+            push(x_pos);
+            push(y_pos);
+            //Add end Point 2th line
+            push((x_pos) - distance);
+            push(y_pos);
         }
 
         x_pos = (x_pos) + distance;
