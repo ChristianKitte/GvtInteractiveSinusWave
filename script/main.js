@@ -9,9 +9,23 @@ var gl = getContext(0.9, 0.9, 0.9, 1);
  */
 var prog;
 
-var a = document.getElementById("value-degree");
-var b = document.getElementById("value-amplitude");
-var c = document.getElementById("value-resolution");
+/**
+ * Die Anzeige für den aktuelle Startgrad
+ * @type {HTMLElement} Das definierte span Element
+ */
+var currentDegree = document.getElementById("value-degree");
+
+/**
+ * Die Anzeige für die aktuelle Amplitude
+ * @type {HTMLElement} Das definierte span Element
+ */
+var currentAmplitude = document.getElementById("value-amplitude");
+
+/**
+ * Die Anzeige für die aktuelle Auflösung
+ * @type {HTMLElement} Das definierte span Element
+ */
+var currentResolution = document.getElementById("value-resolution");
 
 /**
  * Hält den anfänglichen Startwert der Sinuskurve beim Start
@@ -119,8 +133,8 @@ document.getElementById("reset").onclick = () => {
  * @returns {Float32Array|*}
  */
 function getVerticesPointsArray() {
-    var distance = resolution; // ==> Zoom
-    var x_pos = 1;
+    var distance = resolution; // legt über distance die Auflösung fest
+    var x_zeichenPos = 1; // legt die nächste Ausgabe fest (unabh. vom Startgrad)
     var y_pos = 0;
 
     var lastAmplitude = 0
@@ -130,12 +144,12 @@ function getVerticesPointsArray() {
 
     vertices = new Float32Array([]);
 
-    a.innerText = "Aktueller Wert: " + start_val.toString() + " °";
-    b.innerText = "Aktueller Wert: " + y_scale.toString();
-    c.innerText = "Aktueller Wert: " + resolution.toString();
+    currentDegree.innerText = "Aktueller Startwinkel: " + start_val.toString() + " °";
+    currentAmplitude.innerText = "Aktuelle Amplitude: " + y_scale.toString();
+    currentResolution.innerText = "Aktuelle Auflösung: " + resolution.toString();
 
-    for (let i = 1.0; i < 81; i++) {
-        curentStart_val = curentStart_val + distance;
+    for (let i = 1; i < 81; i++) {
+        curentStart_val = curentStart_val + distance; // legt den Grad fest, ab dem an Pos 1 gestartet wird
 
         let radians = curentStart_val * Math.PI / 180.0;
         y_pos = Math.sin(radians) * y_scale;
@@ -143,6 +157,7 @@ function getVerticesPointsArray() {
         let nextRadians = (curentStart_val + distance) * Math.PI / 180.0;
         let nextY_pos = Math.sin(nextRadians) * y_scale;
 
+        /*
         if (y_pos < nextY_pos && y_pos > 0) {
             bridgeToRight = true;
         } else if (y_pos > nextY_pos && y_pos > 0) {
@@ -152,37 +167,44 @@ function getVerticesPointsArray() {
         } else if (y_pos > nextY_pos && y_pos < 0) {
             bridgeToRight = true;
         }
+        */
+
+        if ((y_pos < nextY_pos && y_pos > 0) || (y_pos > nextY_pos && y_pos < 0)) {
+            bridgeToRight = true;
+        } else {
+            bridgeToRight = false;
+        }
 
         lastAmplitude = y_pos;
 
         // Add start Point 1th line
-        push(x_pos);
+        push(x_zeichenPos);
         push(0);
         //Add end Point 1th line
-        push(x_pos);
+        push(x_zeichenPos);
         push(y_pos);
 
-        console.log(curentStart_val);
-        console.log(start_val);
+        console.log(y_pos);
+        console.log(nextY_pos);
         console.log("__");
 
         if (bridgeToRight) {
             //Add start Point 2th line
-            push(x_pos);
+            push(x_zeichenPos);
             push(y_pos);
             //Add end Point 2th line
-            push((x_pos) + distance);
+            push((x_zeichenPos) + distance);
             push(y_pos);
         } else {
             //Add start Point 2th line
-            push(x_pos);
+            push(x_zeichenPos);
             push(y_pos);
             //Add end Point 2th line
-            push((x_pos) - distance);
+            push((x_zeichenPos) - distance);
             push(y_pos);
         }
 
-        x_pos = (x_pos) + distance;
+        x_zeichenPos = x_zeichenPos + distance;
     }
 
     return vertices;

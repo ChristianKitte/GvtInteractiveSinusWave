@@ -2,41 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>2D Geometrie aus Linien</title>
-    <link rel="stylesheet" href="css/index.css">
-</head>
+    <title>EA 1</title>
 
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
 <body>
 
-<div id="configuration">
-    <div>
-        <input class="form-range" type="range" id="degree" name="degree" min="0" max="360" value="0"
-               step="1.0">
-        <label class="form-label" for="degree">Start (Winkel in Grad)</label>
-        <p id=value-degree>Aktueller Wert: </p>
+<div id="layout">
+    <div id="caption">
+        <h1>EA 2 - Interaktive Sinuswelle</h1>
+        <h4>Es soll eine Sprite Animation erstellt und der Rotationszustand angezeigt werden</h4>
+
+        <p>Die hier verwendete Grafik wurde selbst erstellt. Die Sprite Animation wurde als CSS Image Sprite
+            umgesetzt. Hier wurde unterstützend ein
+            <a href="https://www.toptal.com/developers/css/sprite-generator/" target="_blank">Sprite Generator</a>
+            genutzt. Die linke Checkbox bestimmt die Drehrichtung, die rechte, ob die Drehung kontinuierlich ist.
+        </p>
+
+        <p>Wenn die Drehung nicht kontinuierlich ist, kann mit Hilde der Buttons jeweils ein Schritt nach links
+            oder rechts gegangen werden. Ebenso können die Tasten "l" (links) und "r" (rechts) verwendet werden.
+            Zusätzlich kann auch mit der Taste "a" die Drehung an- bzw. bei nochmaligen Drücken ausgeschaltet werden.
+        </p>
     </div>
 
-    <div>
-        <input class="form-range" type="range" id="amplitude" name="amplitude" min="50" max="400" value="100"
+    <div class="slider-bar slider-content">
+        <input class="form-range slider" type="range" id="degree" name="degree" min="0" max="360" value="0"
+               step="1.0">
+        <span id=value-degree>Aktueller Wert: </span>
+    </div>
+    <div class="slider-bar slider-content">
+        <input class="form-range slider" type="range" id="amplitude" name="amplitude" min="50" max="400" value="100"
                step="0.5">
-        <label class="form-label" for="amplitude">Amplitude</label>
-        <p id="value-amplitude">Aktueller Wert: </p>
+        <span id="value-amplitude">Aktueller Wert: </span>
     </div>
-    <div>
-        <input class="form-range" type="range" id="resolution" name="resolution" min="1" max="10" value="4"
+    <div class="slider-bar slider-content">
+        <input class="form-range slider" type="range" id="resolution" name="resolution" min="1" max="10" value="4"
                step="1.0">
-        <label class="form-label" for="resolution">Auflösung</label>
-        <p id="value-resolution">Aktueller Wert: </p>
+        <span id="value-resolution">Aktueller Wert: </span>
     </div>
-    <div>
-        <button type="button" id="reset">Reset</button>
-    </div>
-</div>
 
-<canvas id="canvas" width="1000px" height="500px"></canvas>
+    <div id="buttonBar">
+        <button id="reset" class="btn btn-primary">Reset</button>
+    </div>
+
+    <canvas id="canvas" width="1000px" ></canvas>
+</div>
 
 <script src="script/main.js" type="text/javascript"></script>
 
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
 </body>
-
 </html>
