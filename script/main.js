@@ -137,6 +137,8 @@ function getVerticesPointsArray() {
     var x_zeichenPos = 1; // legt die nächste Ausgabe fest (unabh. vom Startgrad)
     var y_pos = 0;
 
+    var test = false
+
     var lastAmplitude = 0
     var bridgeToRight = true;
 
@@ -158,6 +160,7 @@ function getVerticesPointsArray() {
         let nextY_pos = Math.sin(nextRadians) * y_scale;
 
         /*
+        Ausführliche Angabe der nachfolgenden Verzweigung...
         if (y_pos < nextY_pos && y_pos > 0) {
             bridgeToRight = true;
         } else if (y_pos > nextY_pos && y_pos > 0) {
@@ -184,10 +187,6 @@ function getVerticesPointsArray() {
         push(x_zeichenPos);
         push(y_pos);
 
-        console.log(y_pos);
-        console.log(nextY_pos);
-        console.log("__");
-
         if (bridgeToRight) {
             //Add start Point 2th line
             push(x_zeichenPos);
@@ -204,7 +203,14 @@ function getVerticesPointsArray() {
             push(y_pos);
         }
 
-        x_zeichenPos = x_zeichenPos + distance;
+        // Wichtiger Sonderfall: Der Graph schneidet die Nulllinie. Für den hier verwendeten
+        // Algorithmus darf in diesen Fall die Zeichenposition nicht verändert werden. In allen
+        // anderen Fällen muss sie um den Wert von Distance erhöht werden.
+        if ((y_pos > 0.0 && nextY_pos < 0.0) || (y_pos < 0.0 && nextY_pos > 0.0)) {
+            x_zeichenPos = x_zeichenPos;
+        } else {
+            x_zeichenPos = x_zeichenPos + distance;
+        }
     }
 
     return vertices;
@@ -268,7 +274,7 @@ function RefreshWave() {
 
     // Ausgabe mit drawArray
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.LINES, 0, verticesPointsArray.length);
+    gl.drawArrays(gl.LINES, 0, verticesPointsArray.length / 2);
 }
 
 /**
