@@ -18,3 +18,15 @@ Informatics**
 [zur Webseite](https://gvt.ckitte.de/ea2/)
 
 Im Rahmen der zweiten Einsendeaufgabe sollte eine 2D-Geometrie aus Linien erzeugt und mittels WebGL dargestellt werden. Dabei konnte frei zwischen GL_LINES, GL_LINE_STRIP oder GL_LINE_LOOP gewählt werden.
+
+Für meine Abgabe habe ich mich für die Ausgabe einer dynamisch änderbaren Sinuswelle entschieden, welche fest über 90 berechnete Punkte ausgegeben wird. Mit den unten eingestellten Werten wird so eine vollständige Sinusschwingung ausgegeben.
+
+![](assets/2022-10-16-13-22-08-image.png)
+
+Die Sinuswelle kann anhand von drei Parametern verändert werden.  Mit Startwinkel wird der erste Winkel festgelegt, mit Amplitude erfolgt eine Skalierung des Funktionswertes. Die Auflösung ändert die Breite der verwendeten Balken und somit die Auflösung. Der Resetbutton stellt die anfänglichen Werte wieder her.
+
+![](assets/2022-10-16-13-33-35-image.png)
+
+Als Startseite dient wie üblich eine **index.html**. Die Datei **main.css** enthält alle benötigten Klassen, um die Grafik einfach einzubinden. In der Datei **layout.css** wird das Layout der Webseite selbst festgelegt. Daneben kommt Bootstrap für die Buttons zum Einsatz. Die gesamte Logik der Anwendung befindet sich in der Datei **main.js**.
+
+Der Canvas als zentrales Ausgabeobjekt wurde in der Index.html angelegt und mit einer fixen Breite von 1000px belegt. Alle anderen Einstellungen erfolgen über CSS.
