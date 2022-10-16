@@ -137,8 +137,6 @@ function getVerticesPointsArray() {
     var x_zeichenPos = 1; // legt die nächste Ausgabe fest (unabh. vom Startgrad)
     var y_pos = 0;
 
-    var test = false
-
     var lastAmplitude = 0
     var bridgeToRight = true;
 
@@ -150,9 +148,7 @@ function getVerticesPointsArray() {
     currentAmplitude.innerText = "Aktuelle Amplitude: " + y_scale.toString();
     currentResolution.innerText = "Aktuelle Auflösung: " + resolution.toString();
 
-    for (let i = 1; i < 81; i++) {
-        curentStart_val = curentStart_val + distance; // legt den Grad fest, ab dem an Pos 1 gestartet wird
-
+    for (let i = 0; i < 91; i++) {
         let radians = curentStart_val * Math.PI / 180.0;
         y_pos = Math.sin(radians) * y_scale;
 
@@ -203,10 +199,12 @@ function getVerticesPointsArray() {
             push(y_pos);
         }
 
+        curentStart_val = curentStart_val + distance; // legt den Grad für diee nächste Berechnung fest
+
         // Wichtiger Sonderfall: Der Graph schneidet die Nulllinie. Für den hier verwendeten
         // Algorithmus darf in diesen Fall die Zeichenposition nicht verändert werden. In allen
         // anderen Fällen muss sie um den Wert von Distance erhöht werden.
-        if ((y_pos > 0.0 && nextY_pos < 0.0) || (y_pos < 0.0 && nextY_pos > 0.0)) {
+        if ((y_pos > 0.0 && nextY_pos < 0.0) || (y_pos < 0.0 && nextY_pos > 0.0) || y_pos === 0) {
             x_zeichenPos = x_zeichenPos;
         } else {
             x_zeichenPos = x_zeichenPos + distance;
