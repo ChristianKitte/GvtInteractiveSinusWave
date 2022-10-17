@@ -125,7 +125,18 @@ document.getElementById("resolution").oninput = () => {
  * Ladet die Seite neu und refreshed die Anwendung
  */
 document.getElementById("reset").onclick = () => {
-    window.location.reload();
+    // Firefox setzt die Werte bei einem einfachen Reload nicht zurück!
+    document.getElementById("degree").value = 0;
+    document.getElementById("amplitude").value = 100;
+    document.getElementById("resolution").value = 4;
+
+    start_val = parseFloat(document.getElementById("degree").value);
+    y_scale = parseFloat(document.getElementById("amplitude").value);
+    resolution = parseFloat(document.getElementById("resolution").value);
+    
+    RefreshWave();
+
+    //window.location.reload();
 }
 
 /**
