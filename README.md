@@ -19,7 +19,7 @@ Informatics**
 
 Im Rahmen der zweiten Einsendeaufgabe sollte eine 2D-Geometrie aus Linien erzeugt und mittels WebGL dargestellt werden. Dabei konnte frei zwischen GL_LINES, GL_LINE_STRIP oder GL_LINE_LOOP gewählt werden.
 
-Für meine Abgabe habe ich mich für die Ausgabe einer dynamisch änderbaren Sinuswelle entschieden, welche fest über 90 berechnete Punkte ausgegeben wird. Mit den unten eingestellten Werten wird so eine vollständige Sinusschwingung ausgegeben.
+Für meine Abgabe habe ich mich für die Ausgabe einer dynamisch änderbaren Sinuswelle entschieden, welche fest über 90 berechnete Punkte ausgegeben wird. Mit den unten eingestellten Werten wird so eine vollständige Sinusschwingung ausgegeben. Die Sinuswelle wird hierbei alleine durch vertikale und horizontale Linien erzeugt, welche letzlich die Säulen der Sinuswelle wiedergeben.
 
 ![](assets/2022-10-16-13-22-08-image.png)
 
