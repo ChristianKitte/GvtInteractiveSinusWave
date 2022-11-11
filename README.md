@@ -13,7 +13,7 @@ Informatics**
 
 ---
 
-### Einsendeaufgabe EA2 : 2D-Geometrie aus Linien.
+### Einsendeaufgabe EA2 : 2D-Geometrie aus Linien
 
 [zur Webseite](https://gvt.ckitte.de/ea2/)
 
